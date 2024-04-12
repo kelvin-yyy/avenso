@@ -3,9 +3,9 @@
 		<div class="top">
 			<topTitle @investmentType="investmentType" :topState="topState"></topTitle>
 			<div class="topSearch flexDirectionCenter">
-				<div class="topSearchTitle"> AI powered Venture Capital Sourcing Platform</div>
+				<div class="topSearchTitle">AI powered Venture Capital Sourcing Platform</div>
 				<div class="topSearchTitles">Learn about AI. Curated news and product launches, daily. Deep dives on
-					business use cases, weekly.</div>
+									business use cases, weekly.</div>
 				<div class="topSearchs flexAlignCenter">
 					<input type="text" v-model="companyName" class="topSearchsinput" placeholder="Search posts…" />
 					<div class="topSearchsButton flexcenter" @click="SearchClick()">Search</div>
@@ -21,7 +21,9 @@
 		<div class="allcontent flexcenter">
 			<div class="content flex">
 				<div class="contents" v-for="(item,index) in list" @click="figureClick(item)">
-					<img :src="item.Avatar" alt="" class="contentsimg">
+					<div class="contentsimg">
+						<img :src="item.Avatar" alt="" class="contentsimgs">
+					</div>
 					<div class="DetailedContent">
 						<div class="DetailedContents">{{item.name}}</div>
 						<div class="plus">{{item.introduction}}</div>
@@ -70,7 +72,7 @@
 				hideValue: false,
 				companyName:"",
 				pages:1,
-				investmentTypes:"investmentCompany",
+				investmentTypes:"otherCompanies",
 				topState:true
 			}
 		},
@@ -139,7 +141,7 @@
 
 			.topSearch {
 				margin-top: 110px;
-
+				text-align: center;
 				.topSearchTitle {
 					font-weight: 900;
 					font-size: 64px;
@@ -229,19 +231,22 @@
 				overflow: hidden;
 
 				.contents {
-					width: 384px;
+					width: 29.5%;
 					height: 413px;
 					background: #FFFFFF;
 					box-shadow: 0px 8 28px 3px rgba(0, 0, 0, 0.04);
 					border-radius: 16px;
 					margin-left: 24px;
 					margin-bottom: 24px;
-
 					.contentsimg {
-						width: 100%;
-						height: 200px;
-						object-fit: cover;
-						border-radius: 16px 16px 0 0;
+						text-align: center;
+						padding-top: 10px;
+						.contentsimgs {
+							// width: 200px;
+							// height: 200px;
+							// object-fit: cover;
+							// border-radius: 16px 16px 0 0;
+						}
 					}
 
 					.DetailedContent {
