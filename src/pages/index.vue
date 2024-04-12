@@ -3,9 +3,9 @@
 		<div class="top">
 			<topTitle @investmentType="investmentType" :topState="topState"></topTitle>
 			<div class="topSearch flexDirectionCenter">
-				<div class="topSearchTitle">AI powered Venture Capital Sourcing Platform</div>
+				<div class="topSearchTitle"> AI powered Venture Capital Sourcing Platform</div>
 				<div class="topSearchTitles">Learn about AI. Curated news and product launches, daily. Deep dives on
-					business use cases, weekly. Over 100,000 subscribers</div>
+					business use cases, weekly.</div>
 				<div class="topSearchs flexAlignCenter">
 					<input type="text" v-model="companyName" class="topSearchsinput" placeholder="Search posts…" />
 					<div class="topSearchsButton flexcenter" @click="SearchClick()">Search</div>
