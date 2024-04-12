@@ -17,8 +17,8 @@
 		data() {
 			return {
 				selectList:[
-					{name:"investment company",state:true,id:"investmentCompany"},
-					{name:"General Company",state:false,id:"otherCompanies"}
+					{name:"investment company",state:false,id:"investmentCompany"},
+					{name:"General Company",state:true,id:"otherCompanies"}
 				]
 			}
 			},
