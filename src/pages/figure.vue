@@ -489,6 +489,7 @@
 						padding: 8px 21px;
 						box-sizing: border-box;
 						margin-right: 16px;
+						font-size: 16px;
 					}
 				}
 
