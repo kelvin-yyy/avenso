@@ -1,4 +1,4 @@
-# chatpdf
+# Avenso
 
 ## Project setup
 ```
