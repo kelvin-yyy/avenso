@@ -5,17 +5,23 @@
 			<div class="topSearch flexDirectionCenter">
 				<div class="topSearchTitle">AI powered Venture Capital Sourcing Platform</div>
 				<div class="topSearchTitles">Learn about AI. Curated news and product launches, daily. Deep dives on
-									business use cases, weekly.</div>
+					business use cases, weekly.</div>
 				<div class="topSearchs flexAlignCenter">
 					<input type="text" v-model="companyName" class="topSearchsinput" placeholder="Search posts…" />
 					<div class="topSearchsButton flexcenter" @click="SearchClick()">Search</div>
 				</div>
-			<!-- 	<div class="label flexAlignCenter">
-					<div class="labels flexAlignCenter"><span>Quick Bites</span>
+				<div class="label flexAlignCenter">
+					<div v-for="(v,i) in companyAppetite" v-if="this.investmentTypes=='investmentCompany'"
+						:class="[v.state?'labels nolabels flexAlignCenter':'labels flexAlignCenter']"
+						@click="select(v)"><span>{{v.name}}</span>
 					</div>
-					<div class="labels flexAlignCenter"><span>Quick Bites</span>
+					<div v-for="(v,i) in companyPool" v-if="this.investmentTypes=='otherCompanies'"
+						:class="[v.state?'labels nolabels flexAlignCenter':'labels flexAlignCenter']"
+						@click="classificationClick(v)"><span>{{v.name}}</span>
 					</div>
-				</div> -->
+					<!-- <div class="labels flexAlignCenter"><span>Quick Bites</span>
+					</div> -->
+				</div>
 			</div>
 		</div>
 		<div class="allcontent flexcenter">
@@ -30,9 +36,11 @@
 						<div class="DetailedContentTime">
 							{{item.creatDate}}
 						</div>
-						<div class="labels flexAlignCenter"><img src="../assets/quick.png"
-								alt="" /><span>{{item.type}}</span></div>
-					</div>
+						<div class="flex" style="flex-wrap: wrap;">
+							<div class="labels flexAlignCenter"  v-for="(v,i) in item.classification" ><img src="../assets/quick.png"
+									alt="" /><span>{{v}}</span></div>
+						</div>
+					</div> 
 				</div>
 			</div>
 		</div>
@@ -41,7 +49,7 @@
 				<div style="margin-right: 32px;" @click="pages=1">First</div>
 				<el-pagination class="el-pagination" :page-size="pageSize" background prev-text="< Back"
 					next-text="Next >" :pager-count="pagerCount" layout="prev, pager, next" :total="total"
-					v-model:current-page="pages"/>
+					v-model:current-page="pages" />
 				<div style="margin-left: 32px;" @click="pages=pagerCount">Last</div>
 			</div>
 		</div>
@@ -70,35 +78,124 @@
 				total: "",
 				list: [],
 				hideValue: false,
-				companyName:"",
-				pages:1,
-				investmentTypes:"otherCompanies",
-				topState:true
+				companyName: "",
+				pages: 1,
+				investmentTypes: "otherCompanies",
+				topState: true,
+				companyAppetite: [{
+						name: "Interes",
+						id: "Interes",
+						state: false
+					},
+					{
+						name: "Neuron Portfolio",
+						id: "neuronPortfolio",
+						state: false
+					}
+				],
+				companyPool: [{
+						name: "Interes",
+						id: "Interes",
+						state: false
+					},{
+						name: "Robotics",
+						id: "Robotics",
+						state: false
+					},
+					{
+						name: "Spatial Computing",
+						id: "Spatialcomputing",
+						state: false
+					},
+					{
+						name: "Generative Al for specific are.",
+						id: "Generative",
+						state: false
+					}
+				],
+				collection: "",
+				classification: ""
 			}
 		},
+
 		mounted() {
-			this.topState=true
+			this.topState = true
+			this.investmentTypes = localStorage.getItem('investmentTypes')
 			this.apiReads()
 		},
-		watch:{
-			pages(){
+		watch: {
+			pages() {
 				this.apiReads()
+			},
+			investmentTypes() {
+				localStorage.setItem('investmentTypes', this.investmentTypes)
 			}
 		},
 		methods: {
-			SearchClick(){
-				if(this.pages==1){
+			SearchClick() {
+				if (this.pages == 1) {
 					this.apiReads()
-				}else{
-					this.pages=1
+				} else {
+					this.pages = 1
 				}
 			},
-			apiReads(){
+			select(v) {
+				v.state = !v.state
+				if (v.id == "Interes") {
+					this.companyAppetite[1].state = false
+					if (v.state) {
+						this.collection = 1
+					} else {
+						this.collection = ""
+					}
+				} else if (v.id == "neuronPortfolio") {
+					this.collection = ""
+					this.companyAppetite[0].state = false
+				}
+				this.apiReads()
+			},
+			classificationClick(v) {
+				v.state = !v.state
+				if (v.id == "Interes") {
+					this.companyPool[1].state = false
+					this.companyPool[2].state = false
+					this.companyPool[3].state = false
+				}else if(v.id == "Robotics") {
+					this.companyPool[0].state = false
+					this.companyPool[2].state = false
+					this.companyPool[3].state = false
+				} else if (v.id == "Spatialcomputing") {
+					this.companyPool[0].state = false
+					this.companyPool[1].state = false
+					this.companyPool[3].state = false
+				} else if (v.id == "Generative") {
+					this.companyPool[0].state = false
+					this.companyPool[1].state = false
+					this.companyPool[2].state = false
+				}
+				const allFalse = this.companyPool.every(item => item.state === false)
+				if (allFalse) {
+					this.classification = ""
+					this.collection = ""
+				} else {
+					if (v.id == "Interes") {
+						this.collection = 1
+						this.classification = ""
+					}else{
+						this.classification = v.id
+						this.collection = ""
+					}
+				}
+				this.apiReads()
+			},
+			apiReads() {
 				apiRead({
-					name:this.companyName,
-					pages:this.pages,
-					investmentType:this.investmentTypes,
-					page_size:this.pageSize
+					name: this.companyName,
+					pages: this.pages,
+					investmentType: this.investmentTypes,
+					page_size: this.pageSize,
+					collection: this.collection,
+					classification: this.classification
 				}).then((res) => {
 					this.list = res.data.data
 					this.pageSize = res.data.page_size
@@ -112,7 +209,7 @@
 				})
 			},
 			figureClick(item) {
-				this.topState=false
+				this.topState = false
 				this.$router.push({
 					path: '/figure',
 					query: {
@@ -120,8 +217,19 @@
 					}
 				})
 			},
-			investmentType(value){
-				this.investmentTypes=value
+			investmentType(value) {
+				this.investmentTypes = value
+				if (this.investmentTypes == 'investmentCompany') {
+					this.companyPool.forEach((v, i) => {
+						v.state = false
+					})
+					this.classification = ""
+				} else if (this.investmentTypes == 'otherCompanies') {
+					this.companyAppetite.forEach((v, i) => {
+						v.state = false
+					})
+					this.collection = ""
+				}
 				this.apiReads()
 			}
 		}
@@ -142,6 +250,7 @@
 			.topSearch {
 				margin-top: 110px;
 				text-align: center;
+
 				.topSearchTitle {
 					font-weight: 900;
 					font-size: 64px;
@@ -212,6 +321,15 @@
 							margin-left: 3px;
 						}
 					}
+
+					.nolabels {
+						color: #000;
+						background: #FFFFFF;
+
+						span {
+							color: #000;
+						}
+					}
 				}
 			}
 		}
@@ -238,9 +356,11 @@
 					border-radius: 16px;
 					margin-left: 24px;
 					margin-bottom: 24px;
+
 					.contentsimg {
 						text-align: center;
 						padding-top: 10px;
+
 						.contentsimgs {
 							// width: 200px;
 							// height: 200px;
