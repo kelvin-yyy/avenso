@@ -17,14 +17,14 @@
 						</div>
 					</div>
 					<div class="detailsRight flexcenter">
-						<div class="connectBatton flexcenter">
+						<div class="connectBatton flexcenter" @click="collectionClick()" v-if="list.collection==0">
 							<img src="../../src/assets/keyPoint.png" alt="" style="margin-right: 4px;" />
-							CONNECT TO CRM
+							collection
 						</div>
-						<!-- <div class="saveBatton flexcenter">
-							<img src="https://lanhu.oss-cn-beijing.aliyuncs.com/SketchPngc7bbe807a6648cbca24c647286928a40277fe146752557559a7a654b8effd298" alt="" style="margin-right: 2px;"/>
-							Save
-						</div> -->
+						<div class="saveBatton connectBatton flexcenter" @click="noCollectionClick()" v-if="list.collection==1">
+							<img src="../../src/assets/keyPoint.png" alt="" style="margin-right: 4px;" />
+							Cancel Favorite
+						</div>
 					</div>
 
 				</div>
@@ -60,10 +60,10 @@
 					<div class="detailed flex">
 						<div class="allDetailed">
 							<div class="detailedTitle" style="font-size: 24px;">Unlock for free</div>
-							<div class="detaileds flex" style="margin-top: 42px;">
+						<!-- 	<div class="detaileds flex" style="margin-top: 42px;">
 								<img src="../assets/lock.png" alt="" />
 								<p>Total fundina Amount</p>
-							</div>
+							</div> -->
 						</div>
 						<img src="../assets/right.png" alt="" class="detailedimg" />
 					</div>
@@ -191,12 +191,14 @@
 	import people from "./people.vue"
 	import signals from "./signals.vue"
 	import Companies from "./Companies.vue"
+	import { ElLoading } from 'element-plus'
 	import {
 		apiDetails,
 		apiFinancials,
 		apiNews,
 		apiSimilar,
-		apiEmployee
+		apiEmployee,
+		collectionUpdate
 	} from "../api/user.js"
 	export default {
 		components: {
@@ -280,10 +282,17 @@
 				apiSimilarList:{},
 				employeeList:{},
 				handlePageLoadState: true,
-				topState:false
+				topState:false,
+				listCollection:"",
+				loading:""
 			}
 		},
 		mounted() {
+			this.loading = ElLoading.service({
+			    lock: true,
+			    text: 'Loading',
+			    background: 'rgba(0, 0, 0, 0.7)',
+			  })
 			this.topState=false
 			window.scrollTo(0, 0)
 			window.addEventListener('load', this.handlePageLoad);
@@ -291,7 +300,9 @@
 				id: this.$route.query.id
 			}).then((res) => {
 				this.list = res.data
+				this.listCollection=this.list.collection
 				this.selectList.forEach((item) => {
+					this.loading.close()
 					if (item.state == true) {
 						if (item.id == 2) {
 							this.apiFinancialss()
@@ -304,7 +315,6 @@
 						}
 					}
 				})
-				console.log(res.data)
 					if(res.data.financialDisplay=="Financials"){
 						this.selectList[1].financialState=true
 					}else{
@@ -331,6 +341,14 @@
 			localStorage.removeItem('selectId');
 		},
 		methods: {
+			collectionClick(){
+				this.listCollection=1
+				this.collections()
+			},
+			noCollectionClick(){
+				this.listCollection=0
+				this.collections()
+			},
 			handlePageLoad() {
 				var selectId = localStorage.getItem('selectId');
 				if (selectId) {
@@ -343,16 +361,31 @@
 						}
 					})
 				}
-				// if (selectId == 2) {
-				// 	this.apiFinancialss()
-				// }
+			},
+			collections(){
+				const loading = ElLoading.service({
+				    lock: true,
+				    text: 'Loading',
+				    background: 'rgba(0, 0, 0, 0.7)',
+				  })
+				collectionUpdate({
+					id:this.$route.query.id,
+					collection:this.listCollection
+				}).then((res)=>{
+					setTimeout(() => {
+					  loading.close()
+					}, 500)
+					if(res.data.message=="Success"){
+						this.list.collection=this.listCollection
+					}
+				})
 			},
 			async apiFinancialss() {
 				await apiFinancials({
 					id: this.$route.query.id
 				}).then((res) => {
 					this.FinancialsList=res.data
-					console.log(this.FinancialsList,99)
+					this.loading.close()
 				})
 			},
 			apiNewss(){
@@ -360,6 +393,7 @@
 					id: this.$route.query.id
 				}).then((res) => {
 					this.newsList=res.data
+					this.loading.close()
 				})
 			},
 			apiEmployees(){
@@ -367,6 +401,7 @@
 					id: this.$route.query.id
 				}).then((res) => {
 					this.employeeList=res.data
+					this.loading.close()
 				})
 			},
 			apiSimilars(){
@@ -374,15 +409,23 @@
 					id: 1
 				}).then((res) => {
 					this.apiSimilarList=res.data
+					this.loading.close()
 				})
 			},
 			selectClick(v) {
+				this.loading = ElLoading.service({
+				    lock: true,
+				    text: 'Loading',
+				    background: 'rgba(0, 0, 0, 0.7)',
+				  })
 				this.selectList.forEach((item, index) => {
 					if (v.id == item.id) {
 						item.state = true
 						this.selectId = item.id
 						localStorage.setItem('selectId', item.id);
-						if (item.id == 2) {
+						if (item.id == 1) {
+							this.loading.close()
+						}else if (item.id == 2) {
 							this.apiFinancialss()
 						}else if (item.id == 3){
 							this.apiEmployees()
@@ -459,20 +502,11 @@
 						}
 
 						.saveBatton {
-							width: 90px;
-							height: 44px;
 							background: #0073FF;
-							border-radius: 4px;
-							font-weight: 400;
 							font-size: 16px;
 							color: #FFFFFF;
-							margin-left: 12px;
-
-							img {
-								width: 16px;
-								height: 16px;
-								margin-right: 4px;
-							}
+							height: 44px;
+							border: none;
 						}
 					}
 				}
