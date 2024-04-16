@@ -17,8 +17,8 @@
 		data() {
 			return {
 				selectList:[
-					{name:"Investment company",state:false,id:"investmentCompany"},
-					{name:"General Company",state:true,id:"otherCompanies"}
+					{name:"CompanyAppetite",state:false,id:"investmentCompany"},
+					{name:"Company Pool",state:true,id:"otherCompanies"}
 				]
 			}
 			},
@@ -29,7 +29,14 @@
 			}
 		},
 		mounted() {
-			console.log(this.topState)
+			var investmentTypes=localStorage.getItem('investmentTypes')
+			this.selectList.forEach((res)=>{
+				if(investmentTypes==res.id){
+					res.state=true
+				}else{
+					res.state=false
+				}
+			})
 		},
 		methods:{
 			selectClick(item){
@@ -82,7 +89,6 @@
 				margin-right: 40px;
 			}
 			.noselects{
-				background: #FFFFFF;
 				border-radius: 6px;
 				color: #000;
 				background: #FFFFFF;
