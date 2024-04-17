@@ -83,7 +83,7 @@
 				investmentTypes: "otherCompanies",
 				topState: true,
 				companyAppetite: [{
-						name: "Interes",
+						name: "Interest",
 						id: "Interes",
 						state: false
 					},
@@ -94,7 +94,7 @@
 					}
 				],
 				companyPool: [{
-						name: "Interes",
+						name: "Interest",
 						id: "Interes",
 						state: false
 					},{
