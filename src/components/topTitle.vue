@@ -30,6 +30,9 @@
 		},
 		mounted() {
 			var investmentTypes=localStorage.getItem('investmentTypes')
+			if(investmentTypes==null){
+				investmentTypes="otherCompanies"
+			}
 			this.selectList.forEach((res)=>{
 				if(investmentTypes==res.id){
 					res.state=true
