@@ -13,6 +13,13 @@ export function apiDetails(data) {
 	data
   })
 }
+export function collectionUpdate(data) {
+  return request({
+    url: '/api/collectionUpdate',
+    method: 'post',
+	data
+  })
+}
 export function apiFinancials(data) {
   return request({
     url: '/api/Financials',
