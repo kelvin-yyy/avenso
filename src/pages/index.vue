@@ -121,6 +121,9 @@
 		mounted() {
 			this.topState = true
 			this.investmentTypes = localStorage.getItem('investmentTypes')
+			if(this.investmentTypes==null){
+				this.investmentTypes="otherCompanies"
+			}
 			this.apiReads()
 		},
 		watch: {
